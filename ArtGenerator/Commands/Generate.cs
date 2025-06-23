@@ -6,7 +6,6 @@ using Exiled.API.Features;
 using MEC;
 using Mirror;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -30,7 +29,7 @@ namespace Corwarx_Gameplay.Commands {
 
             Bitmap bitmap = arguments.FirstElement().FindBitmap().Scale(scale);
 
-            new RenderBitmap(bitmap).Render(bitmap.CalculateScale(), Player.Get(sender).Position);
+            new RenderBitmap(bitmap).Render(bitmap.CalculateScale(), Player.Get(sender).Position, Quaternion.identity, false);
 
             response = "Done";
             return true;
