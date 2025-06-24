@@ -13,6 +13,7 @@ namespace ArtGenerator.Core.Features {
     public class RenderBitmap {
         Bitmap _bitmap;
         CoroutineHandle _renderCoroutine;
+        public int millis = 50;
         public List<GameObject> SpawnedObject { get; private set; } = new List<GameObject>();
         public float Progress => (float)SpawnedObject.Count / (_bitmap.Width * _bitmap.Height);
         public RenderBitmap(Bitmap bitmap) { 
@@ -41,6 +42,8 @@ namespace ArtGenerator.Core.Features {
         IEnumerator<float> Render(Bitmap bitmap, float size, Vector3 position, Quaternion rotation, bool collision) {
             Log.Warn($"Generating art at: {position}");
             Stopwatch stopwatch = Stopwatch.StartNew();
+            short standartTPS = Server.MaxTps;
+            Server.MaxTps *= 2;
             stopwatch.Start();
             for (int x = 0; x < bitmap.Width; x++) {
                 for (int y = 0; y < bitmap.Height; y++) {
@@ -74,12 +77,13 @@ namespace ArtGenerator.Core.Features {
                         Log.Error($"[ART ERROR] at ({x},{y}): {ex}");
                     }
 
-                    if (stopwatch.ElapsedMilliseconds >= 50) {
+                    if (stopwatch.ElapsedMilliseconds >= millis) {
                         stopwatch.Restart();
                         yield return Timing.WaitForOneFrame;
                     }
                 }
             }
+            Server.MaxTps = standartTPS;
             Handles.OnEndRenderEvent(new Events.EventArgs.EndRenderEventArg(this));
         }
     }
