@@ -32,8 +32,10 @@ Art genetarot API is a plugin developed for use with the EXILED framework in SCP
 # 🌐 Authors
 `Mr_Over41`
 
-# Images
-![image](https://github.com/user-attachments/assets/8d72b26e-2389-4acc-a487-d71013054ba5)
+# Media
+![image](https://github.com/user-attachments/assets/1f0bd0df-d9a3-42eb-9914-282ffd1eba91)
+![video](https://github.com/user-attachments/assets/82df59af-0524-464e-9e2e-b84fc6dc2dd8)
+
 
 # Examples for developer
 

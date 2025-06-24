@@ -5,6 +5,7 @@ using MEC;
 using Mirror;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using UnityEngine;
 
@@ -39,6 +40,8 @@ namespace ArtGenerator.Core.Features {
 
         IEnumerator<float> Render(Bitmap bitmap, float size, Vector3 position, Quaternion rotation, bool collision) {
             Log.Warn($"Generating art at: {position}");
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            stopwatch.Start();
             for (int x = 0; x < bitmap.Width; x++) {
                 for (int y = 0; y < bitmap.Height; y++) {
                     try {
@@ -63,7 +66,7 @@ namespace ArtGenerator.Core.Features {
                         primitiveObjectToy.NetworkMaterialColor = new UnityEngine.Color(color.R / 255f, color.G / 255f, color.B / 255f);
                         primitiveObjectToy.NetworkPosition = obj.transform.position;
                         primitiveObjectToy.NetworkPrimitiveType = PrimitiveType.Cube;
-                        //primitiveObjectToy.NetworkIsStatic = true;
+                        primitiveObjectToy.NetworkIsStatic = true; // Устанавливаем объект как статический
                         //primitiveObjectToy._collider.isTrigger = collision;
 
                         SpawnedObject.Add(obj);
@@ -71,7 +74,10 @@ namespace ArtGenerator.Core.Features {
                         Log.Error($"[ART ERROR] at ({x},{y}): {ex}");
                     }
 
-                    yield return Timing.WaitForOneFrame;
+                    if (stopwatch.ElapsedMilliseconds >= 50) {
+                        stopwatch.Restart();
+                        yield return Timing.WaitForOneFrame;
+                    }
                 }
             }
             Handles.OnEndRenderEvent(new Events.EventArgs.EndRenderEventArg(this));
