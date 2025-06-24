@@ -43,7 +43,7 @@ namespace ArtGenerator.Core.Features {
             Log.Warn($"Generating art at: {position}");
             Stopwatch stopwatch = Stopwatch.StartNew();
             short standartTPS = Server.MaxTps;
-            Server.MaxTps *= 2;
+            Server.MaxTps += 60;
             stopwatch.Start();
             for (int x = 0; x < bitmap.Width; x++) {
                 for (int y = 0; y < bitmap.Height; y++) {
