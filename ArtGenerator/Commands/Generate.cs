@@ -6,7 +6,6 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 
 namespace Corwarx_Gameplay.Commands {
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
@@ -25,7 +24,8 @@ namespace Corwarx_Gameplay.Commands {
 
             Bitmap bitmap = arguments.FirstElement().FindBitmap().Scale(scale);
 
-            new RenderBitmap(bitmap).Render(bitmap.CalculateScale(), Player.Get(sender).Position, Quaternion.identity, false);
+            Player player = Player.Get(sender);
+            new RenderBitmap(bitmap).Render(bitmap.CalculateScale(), player.Position, player.Rotation.SnapRotation(20), false);
 
             response = "Done";
             return true;
