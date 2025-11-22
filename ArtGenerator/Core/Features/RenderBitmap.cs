@@ -2,16 +2,19 @@
 using Exiled.API.Features;
 using Exiled.API.Features.Toys;
 using MEC;
+using Mirror;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using UnityEngine;
 
-namespace ArtGenerator.Core.Features
-{
+namespace ArtGenerator.Core.Features {
     public class RenderBitmap {
-        Bitmap _bitmap;
-        CoroutineHandle _renderCoroutine;
+        private Bitmap _bitmap;
+        private CoroutineHandle _renderCoroutine;
+
+        public static List<RenderBitmap> Bitmaps { get; private set; } = new List<RenderBitmap>();
+
         public int millis = 50;
         public List<Primitive> SpawnedObjects { get; private set; } = new List<Primitive>();
         public float Progress => (float)SpawnedObjects.Count / (_bitmap.Width * _bitmap.Height);
@@ -21,6 +24,7 @@ namespace ArtGenerator.Core.Features
 
         public void Render(float scale, Vector3 position, Quaternion rotation, bool isCollided = false) {
             if (!Handles.OnRunningRenderEvent(new Events.EventArgs.RunningRenderEventArg(this)).isAllowed) return;
+            Bitmaps.Add(this);
             _renderCoroutine = Timing.RunCoroutine(Render(_bitmap, scale, position, rotation, !isCollided), Segment.Update);
             Handles.OnRunRenderEvent(new Events.EventArgs.RunRenderEventArg(this));
         }
@@ -31,7 +35,39 @@ namespace ArtGenerator.Core.Features
             }
         }
 
-        IEnumerator<float> Render(Bitmap bitmap, float size, Vector3 position, Quaternion rotation, bool collision) {
+        public void RemoveBitmap() {
+            if (!Handles.OnRemovingRenderEventArg(new Events.EventArgs.RemovingRenderEventArg(this)).isAllowed) return;
+            Bitmaps.Remove(this);
+            Timing.RunCoroutine(Despawn());
+            Handles.OnRemoveRenderEventArg(new Events.EventArgs.RemoveRenderEventArg(this));
+        }
+
+        public void RemoveForPlayer(ReferenceHub hub) {
+            if (!Handles.OnRemovingRenderEventArg(new Events.EventArgs.RemovingRenderEventArg(this, hub)).isAllowed)
+                return;
+            Bitmaps.Remove(this);
+            Timing.RunCoroutine(Despawn(hub));
+            Handles.OnRemoveRenderEventArg(new Events.EventArgs.RemoveRenderEventArg(this, hub));
+        }
+
+        private IEnumerator<float> Despawn(ReferenceHub hub = null) {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            stopwatch.Start();
+
+            foreach (Primitive primitive in SpawnedObjects) {
+                if (hub == null)
+                    primitive.UnSpawn();
+                else
+                    hub.connectionToClient.Send(new ObjectDestroyMessage { netId = primitive.Base.netId });
+
+                if (stopwatch.ElapsedMilliseconds >= millis) {
+                    stopwatch.Restart();
+                    yield return Timing.WaitForOneFrame;
+                }
+            }
+        }
+
+        private IEnumerator<float> Render(Bitmap bitmap, float size, Vector3 position, Quaternion rotation, bool collision) {
             Log.Warn($"Generating art at: {position}");
 
             Stopwatch stopwatch = Stopwatch.StartNew();
