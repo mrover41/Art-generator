@@ -8,8 +8,6 @@ Art genetarot API is a plugin developed for use with the EXILED framework in SCP
 - Modular and extensible design for adding new functionalities.
 
 # 📁 Installation and Configuration
-- [Installation Guide](https://github.com/northwood-studios/LabAPI/wiki/Installing-Plugins)  
-- [Configuration Guide](https://github.com/northwood-studios/LabAPI/wiki/Configuring-Plugins)
 
 1. Ensure you have the EXILED framework installed on your SCP: Secret Laboratory server.
    - Follow the installation guide at [EXILED Documentation](https://github.com/Exiled-Team/EXILED/wiki/Installation).
@@ -36,7 +34,7 @@ Art genetarot API is a plugin developed for use with the EXILED framework in SCP
 ![image](https://github.com/user-attachments/assets/1f0bd0df-d9a3-42eb-9914-282ffd1eba91)
 
 
-![video](https://github.com/user-attachments/assets/368788ca-c80a-48d5-9421-e12a4f616b9b)
+![video (Obsolete)](https://github.com/user-attachments/assets/368788ca-c80a-48d5-9421-e12a4f616b9b)
 
 
 
@@ -45,7 +43,7 @@ Art genetarot API is a plugin developed for use with the EXILED framework in SCP
 
 generate art
 ```c#
-string arguments = "C:\\Images\Art.png";
+string arguments = "C:\Images\Art.png";
 
 Bitmap bitmap = arguments.FindBitmap().Scale(scale);
 
